@@ -1,0 +1,5 @@
+- name: "node{{ CONFIG.NODE_ID }} : set storage2.max-concurrent-requests {{ CONFIG.NODE_MAX_CONCURRENT_REQUESTS }}"
+  lineinfile:
+    path: "{{ mountpoint }}/config.yaml"
+    regexp: '^storage2.max-concurrent-requests'
+    line: "storage2.max-concurrent-requests: {{ CONFIG.NODE_MAX_CONCURRENT_REQUESTS }}"

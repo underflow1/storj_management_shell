@@ -1,0 +1,5 @@
+- name: "node{{ NODE_ID }} : reconfigure node vpn"
+  hosts: "{{ current_vpn }}"
+  gather_facts: no
+  roles:
+    - vpn_reconfigure

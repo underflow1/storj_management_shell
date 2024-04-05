@@ -1,0 +1,12 @@
+argparse
+python-dotenv
+prettytable
+jmespath
+ansible
+ansible-pylibssh
+tabulate
+bs4
+requests
+rich
+jsonschema
+pandas

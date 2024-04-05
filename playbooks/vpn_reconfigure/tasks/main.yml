@@ -1,0 +1,47 @@
+- name: "node{{ CONFIG.NODE_ID }} : clean old records"
+  ansible.builtin.shell:
+    cmd: "iptables-save | grep -v node{{ CONFIG.NODE_ID }} | iptables-restore"
+
+- name: "node{{ CONFIG.NODE_ID }} : remove masquerade all"
+  ansible.builtin.iptables:
+    state: absent
+    table: nat
+    chain: POSTROUTING
+    jump: MASQUERADE
+    comment: Allow masquerade
+
+- name: "node{{ CONFIG.NODE_ID }} : add dstnat rules"
+  ansible.builtin.iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: "{{ item }}"
+    match: "{{ item }}"
+    destination: "{{ CONFIG.NODE_IP_ADDRESS_EXTERNAL }}"
+    destination_port: "{{ CONFIG.NODE_PORT_EXTERNAL }}"
+    jump: DNAT
+    to_destination: "{{ CONFIG.MIKROTIK_IP_ADDRESS }}"
+    comment: "node{{ CONFIG.NODE_ID }} {{ CONFIG.NODE_VPN_TYPE }}"
+  loop: 
+    - udp
+    - tcp
+  when: CONFIG.NODE_VPN_TYPE == 'dstnat'
+
+- name: "node{{ CONFIG.NODE_ID }} : add srcnat rules"
+  ansible.builtin.iptables:
+    table: nat
+    chain: POSTROUTING
+    protocol: "{{ item }}"
+    match: "{{ item }}"
+    destination: "{{ CONFIG.MIKROTIK_IP_ADDRESS }}"
+    destination_port: "{{ CONFIG.NODE_PORT_EXTERNAL }}"
+    jump: SNAT
+    to_source: "{{ CONFIG.NODE_IP_ADDRESS_EXTERNAL }}"
+    comment: "node{{ CONFIG.NODE_ID }} {{ CONFIG.NODE_VPN_TYPE }}"
+  loop: 
+    - udp
+    - tcp
+  when: CONFIG.NODE_VPN_TYPE == 'dstnat'
+
+- name: "node{{ CONFIG.NODE_ID }} : netfilter-persistent save"
+  ansible.builtin.shell:
+    cmd: netfilter-persistent save

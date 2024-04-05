@@ -1,0 +1,32 @@
+- name: "{{ ansible_host }}: add dstnat rules"
+  ansible.builtin.iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: "{{ item }}"
+    match: "{{ item }}"
+    destination: "{{ ansible_host }}"
+    destination_port: "{{ mikrotik.id }}101:{{ mikrotik.id }}999"
+    jump: DNAT
+    to_destination: "{{ mikrotik.ip }}"
+    comment: "declaratively dstnat to mikrotik{{ mikrotik.id }} {{ item }}"
+  loop: 
+    - udp
+    - tcp
+  when: CONFIG.NODE_VPN_TYPE == 'dstnat'
+
+- name: "{{ ansible_host }}: add srcnat rules"
+  ansible.builtin.iptables:
+    table: nat
+    chain: POSTROUTING
+    protocol: "{{ item }}"
+    match: "{{ item }}"
+    destination: "{{ mikrotik.ip }}"
+    destination_port: "{{ mikrotik.id }}101:{{ mikrotik.id }}999"
+    jump: SNAT
+    to_source: "{{ ansible_host }}"
+    comment: "declaratively srcnat for mikrotik{{ mikrotik.id }} {{ item }}"
+  loop: 
+    - udp
+    - tcp
+  when: CONFIG.NODE_VPN_TYPE == 'dstnat'
+

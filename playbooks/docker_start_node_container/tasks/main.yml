@@ -1,0 +1,12 @@
+# - name: "node{{ CONFIG.NODE_ID }} : get container's info"
+#   docker_container_info:
+#     name: node{{ CONFIG.NODE_ID }}
+#   register: result
+
+- name: "node{{ CONFIG.NODE_ID }} : start docker container"
+  docker_container:
+    name: node{{ CONFIG.NODE_ID }}
+    state: started
+    comparisons:
+      '*': ignore
+  when: container_info.exists

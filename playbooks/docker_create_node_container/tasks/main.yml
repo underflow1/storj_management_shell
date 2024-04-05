@@ -1,0 +1,55 @@
+- name: "node{{ CONFIG.NODE_ID }} : check identity exists"
+  stat:
+    path: "{{ mountpoint }}/Identity/storagenode"
+  register: storagenode_identity_exists_result
+
+- name: "node{{ CONFIG.NODE_ID }} : copy Identity"
+  copy:
+    src: "../configs/node/{{ CONFIG.NODE_ID }}/Identity/"
+    dest: "{{ mountpoint }}/Identity/"
+  when: "not storagenode_identity_exists_result.stat.exists"
+
+- name: "node{{ CONFIG.NODE_ID }} : check config exists"
+  stat:
+    path: "{{ mountpoint }}/config.yaml"
+  register: storagenode_config_exists_result
+
+- name: "node{{ CONFIG.NODE_ID }} : create docker container (first time run)"
+  docker_container:
+    name: node{{ CONFIG.NODE_ID }}
+    image: storjlabs/storagenode:latest
+    state: started
+    auto_remove: yes
+    volumes:
+      - "{{ mountpoint }}/Identity/storagenode:/app/identity"
+      - "{{ mountpoint }}:/app/config"
+    env:
+      SETUP: "true"
+  when: "not storagenode_config_exists_result.stat.exists"
+
+- name: "node{{ CONFIG.NODE_ID }} : create docker container"
+  docker_container:
+    name: node{{ CONFIG.NODE_ID }}
+    image: storjlabs/storagenode:latest
+    state: present
+    restart_policy: unless-stopped
+    volumes:
+      - "{{ mountpoint }}/Identity/storagenode:/app/identity"
+      - "{{ mountpoint }}:/app/config"
+    hostname: node{{ CONFIG.NODE_ID }}
+    ports:
+      # - 7777:7777
+      - "{{ CONFIG.NODE_IP_ADDRESS_INTERNAL if CONFIG.HOST_PROCESSING else '0.0.0.0' }}:{{CONFIG.NODE_PORT_CONSOLE}}:14002"      
+      - "{{ CONFIG.NODE_IP_ADDRESS_INTERNAL if CONFIG.HOST_PROCESSING else '0.0.0.0' }}:{{CONFIG.NODE_PORT_EXTERNAL}}:28967/tcp"
+      - "{{ CONFIG.NODE_IP_ADDRESS_INTERNAL if CONFIG.HOST_PROCESSING else '0.0.0.0' }}:{{CONFIG.NODE_PORT_EXTERNAL}}:28967/udp"
+    log_driver: syslog
+    log_options:
+      syslog-address: "udp://{{ CONFIG.SYSLOG_SERVER }}:514"
+      cache-disabled: "True"
+      tag: node{{ CONFIG.NODE_ID }}
+      labels: node{{ CONFIG.NODE_ID }}
+    env:
+      WALLET: "{{CONFIG.NODE_WALLET}}"
+      EMAIL: "{{CONFIG.NODE_EMAIL}}"
+      ADDRESS: "{{CONFIG.NODE_IP_ADDRESS_EXTERNAL}}:{{CONFIG.NODE_PORT_EXTERNAL}}"
+      STORAGE: "{{CONFIG.NODE_STORAGE}}GB"

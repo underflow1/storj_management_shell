@@ -1,0 +1,10 @@
+- name: "node{{ CONFIG.NODE_ID }} : clean old records"
+  community.network.routeros_command:
+    retries: 1
+    commands:
+      - :global constComment ("node" . "{{ CONFIG.NODE_ID }}")
+      - /ip firewall nat remove [ /ip firewall nat find where comment ="$constComment" ]
+      - /export terse
+    wait_for:
+      - result[2] not contains node{{ CONFIG.NODE_ID }}
+  when: CONFIG.HOST_PROCESSING

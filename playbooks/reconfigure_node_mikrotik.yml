@@ -1,0 +1,6 @@
+- name: "node{{ NODE_ID }} : reconfigure node vpn"
+  hosts: "{{ current_mikrotik }}"
+  gather_facts: no
+  roles:
+    - mikrotik_clean
+    - mikrotik_create_dstnat

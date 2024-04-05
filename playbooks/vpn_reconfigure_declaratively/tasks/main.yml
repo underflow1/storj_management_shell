@@ -1,0 +1,14 @@
+- name: "mikrotik loop"
+  include_tasks: dstnat.yml
+  loop:
+    - { 'id': 41, 'ip': '95.163.69.36'}
+    - { 'id': 42, 'ip': '95.163.25.168'}
+    - { 'id': 43, 'ip': '85.192.20.99'}
+    - { 'id': 44, 'ip': '213.171.3.46'}
+    - { 'id': 45, 'ip': '82.97.241.198'}
+  loop_control:
+    loop_var: mikrotik
+
+- name: "node{{ CONFIG.NODE_ID }} : netfilter-persistent save"
+  ansible.builtin.shell:
+    cmd: netfilter-persistent save

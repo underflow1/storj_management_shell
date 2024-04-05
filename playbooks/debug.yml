@@ -1,0 +1,7 @@
+- name: "debug node{{ NODE_ID }}"
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  pre_tasks:
+    - debug:
+        msg: "{{ CONFIG }}"

@@ -1,0 +1,7 @@
+{
+  "VPN_IP_ADDRESS": "8.8.8.8",
+  "comment": "https://hetzner.com/",
+  "VPN_IP_ADDRESS_LIST": [
+    "8.8.8.8"
+  ]
+}

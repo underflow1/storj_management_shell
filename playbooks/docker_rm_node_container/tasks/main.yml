@@ -1,0 +1,11 @@
+- name: "node{{ CONFIG.NODE_ID }} : stop docker container"
+  docker_container:
+    name: node{{ CONFIG.NODE_ID }}
+    state: stopped
+  when: container_info.exists
+
+- name: "node{{ CONFIG.NODE_ID }} : remove docker container"
+  docker_container:
+    name: node{{ CONFIG.NODE_ID }}
+    state: absent
+  when: container_info.exists

@@ -1,0 +1,5 @@
+- name: "node{{ CONFIG.NODE_ID }} : set operator.wallet-features zksync to config file"
+  lineinfile:
+    path: "{{ mountpoint }}/config.yaml"
+    regexp: '^operator.wallet-features'
+    line: 'operator.wallet-features: ""'

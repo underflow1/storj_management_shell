@@ -1,0 +1,6 @@
+- name: "node{{ CONFIG.NODE_ID }} : set pieces.enable-lazy-filewalker {{ CONFIG.NODE_ENABLE_LAZY_FILEWALKER }} to config file"
+  lineinfile:
+    path: "{{ mountpoint }}/config.yaml"
+    regexp: '^pieces.enable-lazy-filewalker'
+    line: "pieces.enable-lazy-filewalker: {{ CONFIG.NODE_ENABLE_LAZY_FILEWALKER }}"
+

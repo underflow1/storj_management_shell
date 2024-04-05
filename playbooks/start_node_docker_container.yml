@@ -1,0 +1,10 @@
+- name: "node{{ NODE_ID }} : start node docker container"
+  hosts: "{{ current_host }}"
+  gather_facts: no
+  pre_tasks:
+    - name: "node{{ CONFIG.NODE_ID }} : get container's info"
+      docker_container_info:
+        name: node{{ CONFIG.NODE_ID }}
+      register: container_info  
+  roles:
+    - docker_start_node_container

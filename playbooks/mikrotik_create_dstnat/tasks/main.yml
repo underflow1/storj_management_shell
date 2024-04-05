@@ -1,0 +1,12 @@
+- name: "node{{ CONFIG.NODE_ID }} : create mikrotik{{ CONFIG.NODE_MIKROTIK_ID }} dst-nat"
+  community.network.routeros_command:
+    retries: 1
+    commands:
+      - /ip firewall nat add action=dst-nat chain=dstnat dst-address={{ CONFIG.MIKROTIK_IP_ADDRESS }} dst-port={{ CONFIG.NODE_PORT_EXTERNAL }} protocol=tcp to-addresses={{ CONFIG.NODE_IP_ADDRESS_INTERNAL }} comment=node{{ CONFIG.NODE_ID }}
+      - /ip firewall nat add action=dst-nat chain=dstnat dst-address={{ CONFIG.MIKROTIK_IP_ADDRESS }} dst-port={{ CONFIG.NODE_PORT_EXTERNAL }} protocol=udp to-addresses={{ CONFIG.NODE_IP_ADDRESS_INTERNAL }} comment=node{{ CONFIG.NODE_ID }}
+      - /ip firewall nat add action=src-nat chain=srcnat dst-address={{ CONFIG.NODE_IP_ADDRESS_INTERNAL }} dst-port={{ CONFIG.NODE_PORT_EXTERNAL }} protocol=tcp to-addresses={{ CONFIG.MIKROTIK_IP_ADDRESS_INTERNAL }} comment=node{{ CONFIG.NODE_ID }}
+      - /ip firewall nat add action=src-nat chain=srcnat dst-address={{ CONFIG.NODE_IP_ADDRESS_INTERNAL }} dst-port={{ CONFIG.NODE_PORT_EXTERNAL }} protocol=udp to-addresses={{ CONFIG.MIKROTIK_IP_ADDRESS_INTERNAL }} comment=node{{ CONFIG.NODE_ID }}
+      - :put [:len [/ip firewall nat find where comment=node{{ CONFIG.NODE_ID }}]]
+    wait_for:
+      result[4] contains 4
+  when: CONFIG.HOST_PROCESSING

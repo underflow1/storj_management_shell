@@ -1,0 +1,11 @@
+{
+  "NODE_HOST_ID": "01",
+  "NODE_MIKROTIK_ID": "01",
+  "NODE_NAME": "for fun and profit",
+  "NODE_POOL_NAME": "poolname",
+  "NODE_STORAGE": "500GB",
+  "NODE_VPN_ID": "101",
+  "NODE_DATABASE_STATE": "INTERNAL",
+  "NODE_LXC_SNAPSHOT": "docker2",
+  "NODE_VPN_TYPE": "dstnat"
+}

@@ -1,0 +1,23 @@
+- name: "node{{ CONFIG.NODE_ID }} : create node docker container from scratch"
+  hosts: "{{ current_host }}"
+  gather_facts: no
+  pre_tasks:
+    - name: "node{{ CONFIG.NODE_ID }} : get dataset mount point"
+      shell: "zfs get -H -o value mountpoint {{ CONFIG.NODE_POOL_NAME }}/subvol-{{CONFIG.NODE_ID}}-disk-0"
+      register: ps
+    - name: "current_node : set mountpoint variable"
+      set_fact:
+        mountpoint: "{{ ps.stdout_lines[0] }}"
+#        mountpoint: "/mnt/{{ CONFIG.NODE_POOL_NAME }}/subvol-{{CONFIG.NODE_ID}}-disk-0"
+    - name: "node{{ CONFIG.NODE_ID }} : get container's info"
+      docker_container_info:
+        name: node{{ CONFIG.NODE_ID }}
+      register: container_info
+  roles:
+    - docker_rm_node_container
+    - docker_create_node_container
+    - node_config_max-concurrent-requests
+    - node_config_enable-lazy-filewalker
+    - node_config_log_level
+    - node_config_piece_scan_on_startup
+    - node_config_zksync

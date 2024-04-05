@@ -1,0 +1,23 @@
+---
+- name: "node{{ NODE_ID }} : generate session config (select hosts)"
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  pre_tasks:
+    - debug:
+        msg: "{{ CONFIG }}"
+    - copy:
+        content: "{{ CONFIG }}"
+        dest: /tmp/{{ NODE_ID }}.json
+    - copy:
+        content: "{{ 
+                      { 
+                      'current_host': 'host' + CONFIG.NODE_HOST_ID|string, 
+                      'current_mikrotik': 'mikrotik' + CONFIG.NODE_MIKROTIK_ID|string,
+                      'current_vpn': 'vpn' + CONFIG.NODE_VPN_ID|string,
+                      'current_node': 'node' + CONFIG.NODE_ID|string,
+                      'NODE_ID': CONFIG.NODE_ID,
+                      'CONFIG_PATH': CONFIG_PATH
+                      }
+                  }}"
+        dest: "{{ SESSION_CONFIG }}"

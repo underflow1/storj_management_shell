@@ -1,0 +1,72 @@
+---
+- name: "node{{ NODE_ID }} : select hosts"
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  pre_tasks:
+    - debug:
+        msg: "{{ CONFIG }}"
+    - copy:
+        content: "{{ CONFIG }}"
+        dest: "/tmp/{{ UUID }}.json"
+    - add_host:
+        name: "host{{ CONFIG.NODE_HOST_ID }}"
+        group: current_host
+    - add_host:
+        name: "mikrotik{{ CONFIG.NODE_MIKROTIK_ID }}"
+        group: current_mikrotik
+    - add_host:
+        name: "vpn{{ CONFIG.NODE_VPN_ID }}"
+        group: current_vpn
+
+- name: "node{{ NODE_ID }} : create node docker container from scratch"
+  hosts: current_host
+  gather_facts: no
+  pre_tasks:
+    - name: "node{{ CONFIG.NODE_ID }} : get dataset mount point"
+      shell: "zfs get -H -o value mountpoint {{ CONFIG.NODE_POOL_NAME }}/subvol-{{CONFIG.NODE_ID}}-disk-0"
+      register: ps
+    - name: "node{{ CONFIG.NODE_ID }} : set mountpoint variable"
+      set_fact:
+        mountpoint: "{{ ps.stdout_lines[0] }}"
+#        mountpoint: "/mnt/{{ CONFIG.NODE_POOL_NAME }}/subvol-{{CONFIG.NODE_ID}}-disk-0"
+    - name: "node{{ CONFIG.NODE_ID }} : get container's info"
+      docker_container_info:
+        name: node{{ CONFIG.NODE_ID }}
+      register: container_info
+  roles:
+    - docker_rm_node_container
+    - docker_create_node_container
+    - node_config_max-concurrent-requests
+    - node_config_enable-lazy-filewalker
+    - node_config_log_level
+    - node_config_piece_scan_on_startup
+    - node_config_zksync
+
+# - name: "node{{ NODE_ID }} : mikrotik clean"
+#   any_errors_fatal: true
+#   hosts: mikrotik
+#   gather_facts: no
+#   connection: network_cli
+#   pre_tasks:
+#   roles:
+#     - mikrotik_clean
+
+# - name: "node{{ NODE_ID }} : mikrotik create dstnat"
+#   hosts: current_mikrotik
+#   gather_facts: no
+#   connection: network_cli
+#   roles:
+#     - mikrotik_create_dstnat
+
+# - name: "node{{ NODE_ID }} : vpn reconfigure"
+#   hosts: current_vpn
+#   gather_facts: no
+#   roles:
+#     - vpn_reconfigure
+
+- name: "node{{ NODE_ID }} : start node docker container"
+  hosts: current_host
+  gather_facts: no
+  roles:
+    - docker_start_node_container

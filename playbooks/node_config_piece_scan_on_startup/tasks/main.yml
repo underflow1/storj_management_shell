@@ -1,0 +1,5 @@
+- name: "node{{ CONFIG.NODE_ID }} : set storage2.piece-scan-on-startup {{ CONFIG.NODE_PIECE_SCAN_ON_STARTUP }} to config file"
+  lineinfile:
+    path: "{{ mountpoint }}/config.yaml"
+    regexp: '^storage2.piece-scan-on-startup'
+    line: "storage2.piece-scan-on-startup: {{ CONFIG.NODE_PIECE_SCAN_ON_STARTUP }}"

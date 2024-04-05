@@ -1,0 +1,5 @@
+- name: "node{{ CONFIG.NODE_ID }} : set log level to {{CONFIG.NODE_LOG_LEVEL}} to config file"
+  lineinfile:
+    path: "{{ mountpoint }}/config.yaml"
+    regexp: '^log.level'
+    line: "log.level: {{CONFIG.NODE_LOG_LEVEL}}"

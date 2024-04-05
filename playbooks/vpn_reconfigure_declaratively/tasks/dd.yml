@@ -1,0 +1,6 @@
+- name: "print outer loop {{ ansible_host }}"
+  debug:
+    msg: "{{ mikrotik.id }} {{ mikrotik.ip }} {{ item }}"
+  loop:
+    - tcp
+    - udp
