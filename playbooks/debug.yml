@@ -5,3 +5,5 @@
   pre_tasks:
     - debug:
         msg: "{{ CONFIG }}"
+    - debug:
+        msg: "{{ groups['mikrotik'] | map('extract', hostvars, 'ansible_host') | list }}"

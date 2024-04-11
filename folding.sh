@@ -131,7 +131,7 @@ reconfigure_node_vpn() {
 reconfigure_vpn_decl() {
   status_busy "reconfigure vpn declaratively"
   VPN=$@
-  if (ansible-playbook playbooks/vpn_reconfigure_declaratively.yml -i ${INVENTORY} --extra-vars "@${SESSION_CONFIG}" --extra-vars ahost=${VPN} >> log.log 2>> log.log)
+  if (ansible-playbook playbooks/vpn_reconfigure_declaratively.yml -i ${INVENTORY} --extra-vars CONFIG_PATH=${CONFIG_PATH} --extra-vars ahost=${VPN} >> log.log 2>> log.log)
   then
     status_done
   else
@@ -210,7 +210,7 @@ then
   generate_session_config ${NODE_ID}
   jq --sort-keys . ${NODE_CONFIG}
   jq --sort-keys . ${SESSION_CONFIG}
-  # debug ${NODE_ID}
+  debug ${NODE_ID}
 fi
 
 if [[ $1 == 'node_stop' ]]
@@ -249,6 +249,6 @@ fi
 if [[ $1 == 'reconfigure_vpn_decl' ]]
 then
   VPN=$2
-  generate_session_config 101
+  # generate_session_config 101
   reconfigure_vpn_decl ${VPN}
 fi

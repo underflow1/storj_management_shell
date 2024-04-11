@@ -50,7 +50,8 @@ for item_type in item_types:
             except:
                 port = ""
         name = item_type + item['id']
-        host = 'ansible_host=' + item['ip']
+        # host = 'ansible_host=' + item['ip']
+        host = f"ansible_host={item['ip']} ansible_item_id={item['id']}"
         outfile.write(name + " " + host + port + '\n')
     outfile.write("\n")
 outfile.close()
