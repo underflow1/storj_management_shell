@@ -16,7 +16,8 @@ def read_configs(folder):
                     port_dst_range_list.append(
                         {
                             "ip": config_data["MIKROTIK_IP_ADDRESS"],
-                            "port_range": f"{item_id}000-{item_id}999"
+                            "port_range": f"{item_id}000-{item_id}999",
+                            "id": item_id
 
                         })
     return port_dst_range_list

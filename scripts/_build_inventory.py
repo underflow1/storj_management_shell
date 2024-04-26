@@ -42,17 +42,23 @@ if not os.path.exists(inventory_path):
 outfile = open(os.path.join(inventory_path, 'static-inventory'), 'w')
 for item_type in item_types:
     parse(item_type)
+    print(item_type)
     outfile.write("[" + item_type + "]" + "\n")
     for item in data[item_type]:
+        
         if item_type == 'vpn':
+            print(item)
             try:
                 port = ' ansible_port=' + item['port']
             except:
                 port = ""
         name = item_type + item['id']
         # host = 'ansible_host=' + item['ip']
-        host = f"ansible_host={item['ip']} ansible_item_id={item['id']}"
-        outfile.write(name + " " + host + port + '\n')
+        host = f" ansible_host={item['ip']}"
+        ansible_item_id = f" ansible_item_id={item['id']}"
+        the_line = f"{name}{host}{port}{ansible_item_id}\n"
+        outfile.write(the_line)
+        # outfile.write(name + " " + host + port + " " + ansible_item_id + '\n')
     outfile.write("\n")
 outfile.close()
 

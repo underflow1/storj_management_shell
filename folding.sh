@@ -193,7 +193,7 @@ then
   generate_session_config ${NODE_ID}
   create_container_from_scratch ${NODE_ID}
   # reconfigure_node_mikrotik ${NODE_ID}
-  reconfigure_node_vpn ${NODE_ID}
+  # reconfigure_node_vpn ${NODE_ID}
   start_node_docker_contaier ${NODE_ID}
 fi
 
