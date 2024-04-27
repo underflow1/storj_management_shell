@@ -1,4 +1,4 @@
-- name: "node{{ NODE_ID }} : reconfigure node vpn"
+- name: "reconfigure node vpn"
   hosts: "{{ ahost }}"
   gather_facts: no
   roles:

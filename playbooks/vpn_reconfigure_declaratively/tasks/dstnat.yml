@@ -2,31 +2,12 @@
   ansible.builtin.iptables:
     table: nat
     chain: PREROUTING
-    protocol: "{{ item }}"
-    match: "{{ item }}"
-    destination: "{{ ansible_host }}"
-    destination_port: "{{ mikrotik.id }}101:{{ mikrotik.id }}999"
+    protocol: "{{ prototol_loop_var }}"
+    match: "{{ prototol_loop_var }}"
+    destination: "{{ vpn_loop_var }}"
+    destination_port: "{{ mikrotik_loop_var.port_range }}"
     jump: DNAT
-    to_destination: "{{ mikrotik.ip }}"
-    comment: "declaratively dstnat to mikrotik{{ mikrotik.id }} {{ item }}"
-  loop: 
-    - udp
-    - tcp
-  when: CONFIG.NODE_VPN_TYPE == 'dstnat'
+    to_destination: "{{ mikrotik_loop_var.ip }}"
+    comment: "declaratively dstnat from {{ vpn_loop_var }}:{{ mikrotik_loop_var.port_range }} to mikrotik{{ mikrotik_loop_var.id }} {{ mikrotik_loop_var.ip }} for {{ prototol_loop_var }} protocol"
 
-- name: "{{ ansible_host }}: add srcnat rules"
-  ansible.builtin.iptables:
-    table: nat
-    chain: POSTROUTING
-    protocol: "{{ item }}"
-    match: "{{ item }}"
-    destination: "{{ mikrotik.ip }}"
-    destination_port: "{{ mikrotik.id }}101:{{ mikrotik.id }}999"
-    jump: SNAT
-    to_source: "{{ ansible_host }}"
-    comment: "declaratively srcnat for mikrotik{{ mikrotik.id }} {{ item }}"
-  loop: 
-    - udp
-    - tcp
-  when: CONFIG.NODE_VPN_TYPE == 'dstnat'
 

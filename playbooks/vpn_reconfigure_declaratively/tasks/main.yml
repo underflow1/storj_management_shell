@@ -1,13 +1,25 @@
+# - debug:
+#     msg: "{{ config.VPN_IP_ADDRESS_LIST }}"
+
+- name: Include vars of stuff.yaml into the 'stuff' variable (2.2).
+  ansible.builtin.include_vars:
+    file:  "{{ CONFIG_PATH }}/configuration_items/{{ ansible_item_type }}/{{ ansible_item_id }}/config"
+    name: item_config
+
+- name: remove previous declarative rules
+  ansible.builtin.shell:
+    cmd: "iptables-save | grep -v declarative | iptables-restore"
+
 - name: "mikrotik loop"
-  include_tasks: dstnat.yml
+  include_tasks: protocol_loop.yml
   loop:
-    - { 'id': 41, 'ip': '95.163.69.36'}
-    - { 'id': 42, 'ip': '95.163.25.168'}
-    - { 'id': 43, 'ip': '85.192.20.99'}
-    - { 'id': 44, 'ip': '213.171.3.46'}
-    - { 'id': 45, 'ip': '82.97.241.198'}
+    - {'ip': '217.67.189.234', 'port_range': '44000:44999', 'id': '44'}
+    - {'ip': '85.192.20.99', 'port_range': '43000:43999', 'id': '43'}
+    - {'ip': '10.45.0.1', 'port_range': '45000:45999', 'id': '45'}
+    - {'ip': '95.163.25.168', 'port_range': '42000:42999', 'id': '42'}
+    - {'ip': '95.163.69.36', 'port_range': '41000:41999', 'id': '41'}
   loop_control:
-    loop_var: mikrotik
+    loop_var: mikrotik_loop_var
 
 - name: "node{{ CONFIG.NODE_ID }} : netfilter-persistent save"
   ansible.builtin.shell:

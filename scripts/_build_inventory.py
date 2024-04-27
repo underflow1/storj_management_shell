@@ -56,7 +56,8 @@ for item_type in item_types:
         # host = 'ansible_host=' + item['ip']
         host = f" ansible_host={item['ip']}"
         ansible_item_id = f" ansible_item_id={item['id']}"
-        the_line = f"{name}{host}{port}{ansible_item_id}\n"
+        ansible_item_type = f" ansible_item_type={item_type}"
+        the_line = f"{name}{host}{port}{ansible_item_id}{ansible_item_type}\n"
         outfile.write(the_line)
         # outfile.write(name + " " + host + port + " " + ansible_item_id + '\n')
     outfile.write("\n")
