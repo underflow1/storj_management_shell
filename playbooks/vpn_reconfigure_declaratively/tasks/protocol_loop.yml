@@ -1,0 +1,15 @@
+- name: "protocol loop for dstnat"
+  include_tasks: vpn_loop.yml
+  loop:
+    - tcp
+    - udp
+  loop_control:
+    loop_var: prototol_loop_var
+
+- name: "protocol loop for srcnat"
+  include_tasks: srcnat.yml
+  loop:
+    - tcp
+    - udp
+  loop_control:
+    loop_var: prototol_loop_var

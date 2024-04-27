@@ -1,0 +1,5 @@
+- name: "vpn loop for dstnat"
+  include_tasks: dstnat.yml
+  loop: "{{ item_config.VPN_IP_ADDRESS_LIST }}"
+  loop_control:
+    loop_var: vpn_loop_var

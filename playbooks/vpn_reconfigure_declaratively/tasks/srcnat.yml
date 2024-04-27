@@ -1,0 +1,10 @@
+- name: "{{ ansible_host }}: add srcnat rules"
+  ansible.builtin.iptables:
+    table: nat
+    chain: POSTROUTING
+    protocol: "{{ prototol_loop_var }}"
+    match: "{{ prototol_loop_var }}"
+    destination: "{{ mikrotik_loop_var.ip }}"
+    jump: SNAT
+    to_source: "{{ item_config.VPN_IP_ADDRESS }}"
+    comment: "declaratively srcnat for dstnated mikrotik{{ mikrotik_loop_var.id }} {{ prototol_loop_var }}"
