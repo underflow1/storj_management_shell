@@ -1,4 +1,6 @@
 - name: "{{ ansible_host }}: add dstnat rules"
+  # async: 100
+  # poll: 5
   ansible.builtin.iptables:
     table: nat
     chain: PREROUTING
